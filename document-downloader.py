@@ -96,10 +96,10 @@ def download_one_page_chapter(target_manga, chapter_number, target_folder):
 
 def download_split_pages_chapter(target_manga, chapter_number, target_folder):
     i = 1 # Page start
-    baseUrl = f"{SITE_TARGET}/scan-{target_manga}"
-    print(f'Start_Download::{target_manga} - {chapter_number} from {baseUrl}')
+    base_url = f"{SITE_TARGET}/scan-{target_manga}"
+    print(f'Start_Download::{target_manga} - {chapter_number} from {base_url}')
     while True:
-        url = f"{baseUrl}/{chapter_number}/{i}"
+        url = f"{base_url}/{chapter_number}/{i}"
         response_url = requests.get(url)
         save_path = f"{target_folder}/{i}.jpg"
         response = download_image_from_xpath(response_url, save_path, i)
@@ -109,30 +109,30 @@ def download_split_pages_chapter(target_manga, chapter_number, target_folder):
             print(f'End_Download::Chapter {target_manga}-{chapter_number}')
             break
 
-def merge_files_in_PDF(file_list, pdfName, targetPath):
-    pdfNameWithExtension = str(pdfName) + ".pdf"
-    pdfPath = os.path.join(targetPath, pdfNameWithExtension)
-    if os.path.exists(pdfPath):
-        os.remove(pdfPath)
+def merge_files_in_PDF(file_list, pdf_name, target_path):
+    pdf_name_with_extension = str(pdf_name) + ".pdf"
+    pdf_path = os.path.join(target_path, pdf_name_with_extension)
+    if os.path.exists(pdf_path):
+        os.remove(pdf_path)
     doc = pymupdf.open()
     for filename in file_list:
-        imagePath = os.path.join(pdfName, filename)
-        if imagePath.endswith(".DS_Store"):
+        image_path = os.path.join(pdf_name, filename)
+        if image_path.endswith(".DS_Store"):
             continue
 
         try:
             # Assume insert_file is intended to insert images
-            doc.insert_file(imagePath)
+            doc.insert_file(image_path)
         except Exception as e:
-            print(f"Failed to insert file {imagePath}: {e}")
+            print(f"Failed to insert file {image_path}: {e}")
 
 
-    doc.save(pdfPath)
+    doc.save(pdf_path)
     doc.close()
-    print(f'PDF created::${pdfNameWithExtension}')
+    print(f'PDF created::${pdf_name_with_extension}')
 
-def deleteDownloadFolder(folderPath):
-    shutil.rmtree(folderPath)
+def delete_download_folder(folder_path):
+    shutil.rmtree(folder_path)
 
 
 for x in range(start_chapter, end_chapter + 1):
@@ -152,11 +152,11 @@ for x in range(start_chapter, end_chapter + 1):
         download_one_page_chapter(manga_name, x, chapter_path)
 
     # list chapter images and sort them by ascending order
-    chapterPagesArr = os.listdir(chapter_path)
-    chapterPagesArr.sort(key=lambda x: int(''.join(filter(str.isdigit, x))) if ''.join(filter(str.isdigit, x)) else float('inf'))
-    merge_files_in_PDF(chapterPagesArr, chapter_path, manga_path)
+    chapter_pages_arr = os.listdir(chapter_path)
+    chapter_pages_arr.sort(key=lambda x: int(''.join(filter(str.isdigit, x))) if ''.join(filter(str.isdigit, x)) else float('inf'))
+    merge_files_in_PDF(chapter_pages_arr, chapter_path, manga_path)
 
     # clean individual files
-    deleteDownloadFolder(chapter_path)
+    delete_download_folder(chapter_path)
 
 print('Task complete')
