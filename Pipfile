@@ -9,6 +9,8 @@ requests = "*"
 pymupdf = "*"
 pillow = "*"
 beautifulsoup4 = "*"
+flake8 = "*"
+black = "*"
 
 [dev-packages]
 
